@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مركز الصيانة مليون موبايل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Cairo', 'sans-serif'],
+            },
+            colors: {
+              primary: '#2c3e50',
+              secondary: '#d4af37', // Gold-ish
+              accent: '#3498db',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @media print {
+        .no-print { display: none !important; }
+        .print-only { display: block !important; }
+        body { background-color: white; margin: 0; padding: 0; }
+        @page { size: A4; margin: 0; }
+        /* Ensure background colors print */
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      }
+      .print-only { display: none; }
+    </style>
+    <link rel="stylesheet" href="/index.css">
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

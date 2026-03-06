@@ -1,0 +1,220 @@
+
+import { CompatibilityItem } from './types';
+
+export const APP_NAME = "مركز الصيانة مليون موبايل";
+
+// القائمة المحدثة لحالة الجهاز المطلوبة
+export const DEVICE_STATUS_OPTIONS = [
+  "جاهز للاستلام",
+  "تم التسليم",
+  "عدم اصلاح",
+  "محمود الصالحي",
+  "هاني",
+  "محمد طارق",
+  "فيصل",
+  "سيف",
+  "معاذ"
+];
+
+// قائمة المدونين المطلوبة لملاحظات الريسبشن
+export const RECEPTION_TAKERS = ["امنه", "فادي", "محمود", "ايمن", "محمد حسين"];
+
+export const DEVICE_STATUSES = [
+  "جديد",
+  "قيد الإصلاح",
+  "جاهز للاستلام",
+  "تم التسليم",
+  "عدم اصلاح",
+  "محمود الصالحي",
+  "هاني",
+  "محمد طارق",
+  "فيصل",
+  "سيف",
+  "معاذ"
+];
+
+// التحديث المطلوب للقائمة
+export const STAFF_NAMES = ["امنه", "محمود الصالحي", "فادي", "ايمن", "محمد حسين"];
+
+export const PERMISSIONS_LIST = [
+  { id: 'requests', label: 'الوصول لطلبات الصيانة' },
+  { id: 'add_request', label: 'إضافة طلب صيانة جديد' },
+  { id: 'delete_request', label: 'حذف طلبات الصيانة' },
+  { id: 'notes', label: 'الوصول لملاحظات الريسبشن' },
+  { id: 'add_note', label: 'إضافة ملاحظة ريسبشن' },
+  { id: 'delete_note', label: 'حذف ملاحظات الريسبشن' },
+  { id: 'compatibility', label: 'فحص التوافقات' },
+  { id: 'calculators', label: 'الحاسبات' },
+];
+
+const SCREENS_RAW = [
+    "REALME 5 2019 / OPPO A31 / OPPO A5 / OPPO A9 2020",
+    "REALME C11 202 / REALME C12 / REALME C15 / NARZO 20 2020 / REALME C25 2021 / OPPO A15",
+    "SAMSUNG TAB T290 / T295",
+    "SAMSUNG A022 / SAMSUNG M12 / SAMSUNG A125",
+    "VIVO Y11S / VIVO Y15S 2021 / VIVO Y12S / Y21S / VIVO Y20 / VIVO Y20S 2020",
+    "VIVO Y12 2020 / VIVO Y11 2019 / VIVO Y15 / VIVO Y17",
+    "TECNO SPARK 7 PRO KF8 / TECNO CAMON 17",
+    "TECNO SPARK 10 PRO / INFINIX HOT 30 / TECNO POVA 5 / TECNO SPARK 20 PRO / TECNO POVA 5 PRO 5G / TECNO POVA 6 NEO",
+    "TECNO POVA 2 / TECNO POVA 3",
+    "INFINIX HOT 10 / TECNO POVA / TECNO CAMON 16 / TECNO SPARK 6",
+    "REALME C3 / REALME 6I / OPPO A31 / OPPO A51 / OPPO A9 2020",
+    "HUAWEI NOVA 5T / HONOR 20 PRO / HONOR 20",
+    "HUAWEI NOVA 7I / HUAWEI P40 LITE",
+    "HUAWEI Y7P / HONOR 9C 2020",
+    "HUAWEI Y9 PRIME 2019 / HUAWEI P SMART PRO 2019 / HUAWEI Y9S",
+    "HUAWEI Y9 2019 / HUAWEI Y8S 2020",
+    "REDMI NOTE 10 5G 2020 / POCO M3 PRO",
+    "POCO M3 / REDMI 9T",
+    "POCO X3 / POCO X3 PRO",
+    "SAMSUNG A135 / SAMSUNG A23",
+    "SAMSUNG A035 / A037 / A025",
+    "VIVO Y3S / VIVO Y15 / VIVO Y3 / VIVO Y11 / VIVO Y12 / VIVO Y17",
+    "INFINIX HOT 8 / SPARK 4 / CAMON 12",
+    "INFINIX HOT 9 / HOT 9 LITE / HOT 9 PRO / NOTE 8 LITE / SPARK 5",
+    "REALME C25 / REALME C25S / OPPO A16 / OPPO A16S / OPPO A54S / OPPO A56 / NARZO 50A",
+    "SAMSUNG J610 / SAMSUNG J410 / SAMSUNG J415",
+    "IPHONE 12 / IPHONE 12 PRO",
+    "REALME C11 2021 / REALME C21 2021 / NARZO 50I",
+    "OPPO A92 / REALME 6 / REALME 7",
+    "REALME 7I / REALME C17 / OPPO A53 / OPPO A32 / OPPO A33 2020 / OPPO A53S",
+    "INFINIX HOT 10 LITE / SMART 5 / SPARK 6 GO",
+    "SAMSUNG A11 / SAMSUNG M11",
+    "SAMSUNG A30 / SAMSUNG A50 OLED",
+    "REDMI 9A / REDMI 9C / REDMI 10A",
+    "REDMI NOTE 9S / REDMI NOTE 9 PRO",
+    "SAMSUNG TAB T110 / T113 / T116 / T111",
+    "INFINIX ZERO 8 / TECNO CAMON 16 PRIME",
+    "REDMI 8 / REDMI 8A",
+    "XIAOMI MI 9T / K20 PRO",
+    "SPARK GO 2021 / SPARK 7T / SPARK 7",
+    "OPPO F5 / OPPO A73",
+    "HONOR X8A / HONOR 90 LITE",
+    "REDMI NOTE 11 / REDMI NOTE 11S / REDMI NOTE 12S / POCO M4 PRO 4G",
+    "REDMI NOTE 10 PRO / REDMI NOTE 12 PRO / REDMI NOTE 11 PRO / REDMI NOTE 11 PRO PLUS / POCO X4 PRO",
+    "REALME C30 / REALME C33",
+    "REALME C51 / REALME C53",
+    "SPARK GO 2023 / ITEL P40 / TECNO POP 7 PRO 2023 / INFINIX SMART 7 HD / INFINIX SMART 7 / TECNO SPARK 10 / TECNO SPARK 10C / ITEL VISION 3 / ITEL A60",
+    "TECNO CAMON 20 PRO / INFINIX NOTE 30 PRO",
+    "INFINIX SMART 8 / INFINIX HOT 40I / TECNO SPARK GO 2024 / TECNO SPARK 20 / TECNO SPARK 20C / TECNO POP 8",
+    "OPPO A93 4G / F17 Pro / Reno 4 4G / Reno 4 5G",
+    "REALME 8 5G / REALME 9 5G / REALME Narzo 30 5G / REALME Narzo 30 Pro 5G / OPPO A92s 5G",
+    "REDMI A3 / REDMI A3X",
+    "MI 10T / MI 10T PRO",
+    "MI 10T 5G / REDMI K30S",
+    "REDMI 10C / POCO C40",
+    "TECNO CAMON 40 PRO / TECNO SPARK 20 PRO PLUS / INFINIX HOT 50+",
+    "TECNO CAMON 30 / TECNO POVA 6 PRO",
+    "TECNO SPARK 9 PRO / TECNO SPARK 8P",
+    "POCO F4 / POCO F3 / BLACK SHARK 4",
+    "MI K50 GAMING / POCO F4 GT",
+    "HUAWEI NOVA 3I / HUAWEI MATE 20 LITE",
+    "POCO F3 GT / K40 GAMING",
+    "REDMI 14C / POCO C75 / POCO C71",
+    "REDMI A1 / REDMI A1+ / REDMI A2 / REDMI A2+ / POCO C51",
+    "REDMI NOTE 10 4G / REDMI NOTE 10S 4G / POCO M5S",
+    "REDMI NOTE 10 PRO 5G / POCO X3 GT",
+    "POCO X6 5G / REDMI NOTE 13 PRO 5G",
+    "REDMI 13C / POCO C65",
+    "POCO M6 PRO / REDMI 12 / REDMI 13",
+    "REDMI NOTE 12 PRO PLUS / POCO X5 PRO 5G / REDMI NOTE 12 PRO 5G",
+    "POCO F6 PRO 5G / POCO X6 PRO",
+    "MI NOTE 10 / MI NOTE 10 PRO / MI NOTE 10 LITE",
+    "TECNO SPARK GO1 / TECNO SPARK 30C / TECNO POVA NEO 6",
+    "TECNO SPARK GO2 / TECNO SPARK 40 / TECNO SPARK 40C",
+    "TECNO SPARK GO 2022 / TECNO POP 5 LITE / TECNO POP 5 PRO",
+    "POCO M3 PRO / REDMI NOTE 10 5G",
+    "POCO X4 GT / MI 11T N.F / MI 11T PRO N.F",
+    "TECNO CAMON 19 NEO / TECNO CAMON 18P / TECNO CAMON 18 / TECNO CAMON 18T / TECNO CAMON 17P",
+    "TECNO CAMON 19 PRO / TECNO CAMON 19",
+    "TECNO POUVOIR 4 PRO / TECNO SPARK 5 AIR / TECNO POUVOIR 4",
+    "TECNO SPARK 8C / TECNO SPARK 9 / TECNO SPARK 9T",
+    "TECNO SPARK 5 PRO / TECNO CAMON 15",
+    "REALME 10 4G / REALME 11 4G / OPPO RENO 8 / REALME 9 4G",
+    "REALME 11 5G / REALME C67 / REALME C55",
+    "REALME 12X / REALME C65",
+    "REALME 5 / REALME 5I / REALME C3 / OPPO A9 2020",
+    "REALME 7 5G / OPPO A72 5G",
+    "REALME 7 PRO / REALME 8 PRO / REALME 8",
+    "REALME 8I / REALME 9I / REALME NARZO 50 / OPPO A96 5G",
+    "REALME C11 / REALME C12 / REALME C15",
+    "REALME C55 / REALME C67 5G / REALME 11 5G",
+    "REALME 5T NEO5 / REALME GT3 / REALME GT5",
+    "REALME 11 PRO / REALME 11 PRO PLUS / REALME 10 PRO PLUS",
+    "REALME 12 PRO / REALME 12 PRO PLUS",
+    "HUAWEI P20 LITE / HUAWEI NOVA 3E",
+    "HUAWEI NOVA 4 / HONOR VIEW 20",
+    "TECLAST P30T / TECLAST P30T KIT",
+    "TECNO SPARK SLIM / TECNO POVA SLIM",
+    "REDMI NOTE 13 PRO 4G / REDMI NOTE 14 PRO 4G",
+    "SAMSUNG T560 / SAMSUNG 561",
+    "SAMSUNG T220 / SAMSUNG T225",
+    "IPHONE IPAD 7 / IPHONE IPAD 9",
+    "SAMSUNG X110 / SAMSUNG X115",
+    "SAMSUNG X210 / SAMSUNG X216",
+    "SAMSUNG T295 / SAMSUNG T290",
+    "SAMSUNG A36 N.F / SAMSUNG A56 N.F"
+];
+
+const BATTERIES_RAW = [
+    "SAMSUNG a20 / SAMSUNG A50 / SAMSUNG A30",
+    "SAMSUNG A54 / SAMSUNG A34 / SAMSUNG A35 / SAMSUNG A55",
+    "SAMSUNG A72 / SAMSUNG A42",
+    "SAMSUNG G780 S20FE",
+    "REDMI NOTE 11 / REDMI NOTE 11S / REDMI NOTE 12S / POCO M4 PRO",
+    "POCO M3 / REDMI 9T",
+    "POCO X3 / POCO X3 PRO",
+    "SAMSUNG A750 / SAMSUNG A10",
+    "SAMSUNG G780 S20 FE / A52",
+    "IPHONE 12 / IPHONE 12 PRO",
+    "HUAWEI Y9 PRIME 2019 / HUAWEI Y9S / HUAWEI Y7 PRIME 2019 / HUAWEI Y8S",
+    "HONOR 8X 2019 / HUAWEI NOVA 5T / HONOR VIEW 10 / HUAWEI MATE 20 LITE / HUAWEI NOVA 4",
+    "TECNO CAMON 12 / TECNO SPARK 4 / TECNO SPARK 4 LITE",
+    "SAMSUNG A217 / SAMSUNG A12 / SAMSUNG A025 / SAMSUNG 022 / SAMSUNG A035",
+    "REDMI 9A / REDMI 9C",
+    "SAMSUNG J810 / SAMSUNG A605 / SAMSUNG A6 PLUS",
+    "HONOR 90 LITE / HONOR X8A / HONOR X8B"
+];
+
+const COVERS_RAW = [
+    "IPHONE 12 / IPHONE 12 PRO",
+    "SAMSUNG A30 / SAMSUNG A50 OLED",
+    "REDMI NOTE 11 / REDMI NOTE 11S / REDMI NOTE 12S / POCO M4 PRO 4G",
+    "REDMI NOTE 10 PRO / REDMI NOTE 12 PRO / REDMI NOTE 11 PRO / REDMI NOTE 11 PRO PLUS / POCO X4 PRO",
+    "OPPO A93 4G / F17 Pro / Reno 4 4G / Reno 4 5G",
+    "MI 10T / MI 10T PRO",
+    "TECNO CAMON 40 PRO / TECNO SPARK 20 PRO PLUS / INFINIX HOT 50+",
+    "TECNO CAMON 30 / TECNO POVA 6 PRO",
+    "POCO F4 / POCO F3 / BLACK SHARK 4",
+    "MI K50 GAMING / POCO F4 GT",
+    "REDMI NOTE 10 4G / REDMI NOTE 10S 4G / POCO M5S",
+    "POCO X6 5G / REDMI NOTE 13 PRO 5G",
+    "POCO F6 PRO 5G / POCO X6 PRO",
+    "MI NOTE 10 / MI NOTE 10 PRO / MI NOTE 10 LITE",
+    "POCO X4 GT / MI 11T N.F / MI 11T PRO N.F",
+    "REALME 10 4G / REALME 11 4G / OPPO RENO 8 / REALME 9 4G",
+    "REALME 5T NEO5 / REALME GT3 / REALME GT5",
+    "REALME 11 PRO / REALME 11 PRO PLUS / REALME 10 PRO PLUS",
+    "REALME 12 PRO / REALME 12 PRO PLUS",
+    "TECNO SPARK SLIM / TECNO POVA SLIM",
+    "REDMI NOTE 13 PRO 4G / REDMI NOTE 14 PRO 4G",
+    "REALME 7 PRO / REALME 8 PRO / REALME 8",
+    "SAMSUNG A36 / SAMSUNG A56",
+    "IPHONE 13 / IPHONE 13 PRO",
+    "POCO F3 / POCO F4"
+];
+
+const processCompatibility = (raw: string[], type: 'screen' | 'battery' | 'cover'): CompatibilityItem[] => {
+  return raw.map((item, index) => ({
+    id: `${type}-${index}`,
+    type,
+    originalText: item,
+    devices: item.split('/').map(d => d.trim())
+  }));
+};
+
+export const COMPATIBILITY_DATA = [
+  ...processCompatibility(SCREENS_RAW, 'screen'),
+  ...processCompatibility(BATTERIES_RAW, 'battery'),
+  ...processCompatibility(COVERS_RAW, 'cover'),
+];
