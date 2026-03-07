@@ -12,8 +12,8 @@ dotenv.config();
 let globalMegaStorage: Storage | null = null;
 
 async function getMegaConnection() {
-  const email = process.env.MEGA_EMAIL;
-  const password = process.env.MEGA_PASSWORD;
+  const email = process.env.MEGA_EMAIL?.trim();
+  const password = process.env.MEGA_PASSWORD?.trim();
 
   if (!email || !password) {
     throw new Error("MEGA credentials (MEGA_EMAIL, MEGA_PASSWORD) are missing in environment variables.");
@@ -34,17 +34,34 @@ async function getMegaConnection() {
 
   console.log(`[MEGA] New connection attempt for: ${email.replace(/(.{2})(.*)(@.*)/, '$1***$3')}`);
   
-  const storage = new Storage({
-    email,
-    password,
-    autologin: true,
-    keepalive: true
-  });
+  try {
+    const storage = new Storage({
+      email,
+      password,
+      autologin: false,
+      keepalive: true
+    });
 
-  await storage.ready;
-  globalMegaStorage = storage;
-  console.log("[MEGA] Connected successfully.");
-  return storage;
+    await new Promise((resolve, reject) => {
+      storage.login((err) => {
+        if (err) {
+          console.error("[MEGA] Login callback error:", err.message);
+          reject(err);
+        } else {
+          resolve(null);
+        }
+      });
+    });
+
+    await storage.ready;
+    globalMegaStorage = storage;
+    console.log("[MEGA] Connected successfully.");
+    return storage;
+  } catch (error: any) {
+    globalMegaStorage = null;
+    console.error("[MEGA] Connection failed:", error.message);
+    throw error;
+  }
 }
 
 async function startServer() {
@@ -95,7 +112,8 @@ async function startServer() {
       console.error("[MEGA] Fetch Error:", error.message);
       // Don't expose internal error details if it's just auth failure
       if (error.message.includes("ENOENT") || error.message.includes("-9")) {
-         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password." });
+         console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
+         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password. Please check your .env file." });
       }
       res.status(500).json({ error: error.message || "Failed to fetch from MEGA" });
     }
@@ -167,7 +185,8 @@ async function startServer() {
       globalMegaStorage = null; // Invalidate connection on error
       console.error("[MEGA] Backup Error:", error.message);
       if (error.message.includes("ENOENT") || error.message.includes("-9")) {
-         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password." });
+         console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
+         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password. Please check your .env file." });
       }
       res.status(500).json({ error: error.message || "Failed to upload to MEGA" });
     }
