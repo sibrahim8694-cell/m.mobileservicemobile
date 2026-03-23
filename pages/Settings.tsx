@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StorageService from '../services/storage';
-import { Save, Cloud, Download, Clock, Database, RefreshCw, Key, Shield, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Save, Cloud, Download, Clock, Database, RefreshCw, Key, Shield, Trash2, CheckCircle, XCircle, Upload } from 'lucide-react';
 import { BackupLog } from '../types';
 import DeleteModal from '../components/DeleteModal';
 
@@ -10,6 +10,13 @@ const Settings: React.FC = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const [isSavingPwd, setIsSavingPwd] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  
+  // Company Settings State
+  const [companyName, setCompanyName] = useState('');
+  const [companyPhones, setCompanyPhones] = useState('');
+  const [companyAddress, setCompanyAddress] = useState('');
+  const [companyLogo, setCompanyLogo] = useState('');
+  const [isSavingCompany, setIsSavingCompany] = useState(false);
   
   // New state for progress simulation
   const [progress, setProgress] = useState(0);
@@ -24,6 +31,10 @@ const Settings: React.FC = () => {
     if (settings.deletePassword) {
       setDeletePassword(settings.deletePassword);
     }
+    setCompanyName(settings.companyName || '');
+    setCompanyPhones(settings.companyPhones || '');
+    setCompanyAddress(settings.companyAddress || '');
+    setCompanyLogo(settings.companyLogo || '');
 
     // Auto Backup simulation (In a real browser, we just save to local storage often, 
     // but here we simulate creating a restore point log)
@@ -111,6 +122,22 @@ const Settings: React.FC = () => {
     setTimeout(() => {
       setIsSavingPwd(false);
       alert('تم حفظ كلمة مرور الحذف بنجاح');
+    }, 500);
+  };
+
+  const handleSaveCompany = () => {
+    setIsSavingCompany(true);
+    const settings = StorageService.getSettings();
+    StorageService.saveSettings({ 
+      ...settings, 
+      companyName,
+      companyPhones,
+      companyAddress,
+      companyLogo
+    });
+    setTimeout(() => {
+      setIsSavingCompany(false);
+      alert('تم حفظ بيانات الشركة بنجاح');
     }, 500);
   };
 
@@ -229,6 +256,101 @@ const Settings: React.FC = () => {
             </button>
           </div>
         </div>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 md:col-span-2">
+          <div className="flex items-center gap-4 mb-4">
+             <div className="bg-blue-100 p-3 rounded-full text-blue-600">
+               <Database size={24} />
+             </div>
+             <div>
+               <h3 className="font-bold text-lg">بيانات الشركة (تظهر في الطباعة)</h3>
+               <p className="text-sm text-gray-500">تعديل اسم الشركة، أرقام الهواتف، العنوان، والشعار</p>
+             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">اسم الشركة</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">أرقام الهواتف</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary"
+                value={companyPhones}
+                onChange={(e) => setCompanyPhones(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">العنوان</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary"
+                value={companyAddress}
+                onChange={(e) => setCompanyAddress(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">شعار الشركة (Logo)</label>
+              <div className="flex items-center gap-4">
+                {companyLogo && (
+                  <div className="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
+                    <img src={companyLogo} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    id="logo-upload"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setCompanyLogo(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  <label 
+                    htmlFor="logo-upload"
+                    className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+                  >
+                    <Upload size={16} />
+                    اختر صورة الشعار
+                  </label>
+                  {companyLogo && (
+                    <button 
+                      type="button"
+                      onClick={() => setCompanyLogo('')}
+                      className="mr-3 text-red-500 text-sm hover:underline"
+                    >
+                      إزالة
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button 
+              onClick={handleSaveCompany}
+              disabled={isSavingCompany}
+              className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              <Save size={18} />
+              {isSavingCompany ? 'جاري الحفظ...' : 'حفظ بيانات الشركة'}
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

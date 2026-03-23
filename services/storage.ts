@@ -322,7 +322,13 @@ const StorageService = {
 
   getNotes: (): ReceptionNote[] => safeParse<ReceptionNote[]>(KEYS.NOTES, []),
   
-  getSettings: () => safeParse<any>(KEYS.SETTINGS, { deletePassword: '' }),
+  getSettings: () => safeParse<any>(KEYS.SETTINGS, { 
+    deletePassword: '',
+    companyName: 'مركز الصيانة مليون موبايل',
+    companyPhones: 'فرع الظل 0924561111 / فرع زناته 0949291111',
+    companyAddress: '',
+    companyLogo: ''
+  }),
   
   saveSettings: (settings: any) => {
     localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));

@@ -32,12 +32,14 @@ const ReceptionNotes: React.FC = () => {
 
   useEffect(() => {
     if (printNote && printRef.current) {
+        const settings = StorageService.getSettings();
+        const companyName = settings.companyName || APP_NAME;
         const win = window.open('', '', 'height=600,width=800');
         if (win) {
             win.document.write(`
                 <html dir="rtl">
                 <head>
-                    <title>ملاحظة - ${APP_NAME}</title>
+                    <title>ملاحظة - ${companyName}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
                     <style>
                         body { font-family: 'Cairo', sans-serif; padding: 40px; }
@@ -48,7 +50,8 @@ const ReceptionNotes: React.FC = () => {
                             text-align: center;
                         }
                         h1 { margin-bottom: 5px; }
-                        .logo-symbol { display: inline-block; width: 60px; height: 60px; background: #000; color: #d4af37; border-radius: 50%; text-align: center; line-height: 60px; font-size: 30px; font-weight: bold; }
+                        .logo-symbol { display: inline-block; width: 60px; height: 60px; background: #000; color: #d4af37; border-radius: 50%; text-align: center; line-height: 60px; font-size: 30px; font-weight: bold; overflow: hidden; }
+                        .logo-symbol img { width: 100%; height: 100%; object-fit: cover; }
                         .meta { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
                         .content { 
                             text-align: right; 
@@ -368,7 +371,24 @@ const ReceptionNotes: React.FC = () => {
                 {printNote && (
                     <>
                         <div style={{textAlign: 'center', marginBottom: '10px'}}>
-                            <div className="logo-symbol">M</div>
+                            <div className="logo-symbol">
+                                {StorageService.getSettings().companyLogo ? (
+                                    <img src={StorageService.getSettings().companyLogo} alt="Logo" />
+                                ) : (
+                                    'M'
+                                )}
+                            </div>
+                            <div style={{ fontSize: '16px', fontWeight: 'bold', marginTop: '10px', color: '#000' }}>
+                                {StorageService.getSettings().companyName || APP_NAME}
+                            </div>
+                            <div style={{ fontSize: '12px', fontWeight: 'bold', marginTop: '5px', color: '#333' }}>
+                                {StorageService.getSettings().companyPhones || 'فرع الظل 0924561111 / فرع زناته 0949291111'}
+                            </div>
+                            {StorageService.getSettings().companyAddress && (
+                                <div style={{ fontSize: '11px', marginTop: '3px', color: '#555' }}>
+                                    {StorageService.getSettings().companyAddress}
+                                </div>
+                            )}
                         </div>
                         <div className="meta">
                             <div className="date">التاريخ: {new Date(printNote.date).toLocaleString('ar-EG')}</div>

@@ -51,13 +51,17 @@ const ServiceRequests: React.FC = () => {
 
   const handlePrint = (previewMode = false) => {
     const printContent = printRef.current;
+    const settings = StorageService.getSettings();
+    const companyName = settings.companyName || 'مركز الصيانة مليون موبايل';
+    const companyLogo = settings.companyLogo || '';
+    
     if (printContent) {
         const win = window.open('', '', 'height=850,width=1000');
         if (win) {
             win.document.write(`
                 <html dir="rtl">
                 <head>
-                    <title>${previewMode ? 'معاينة الإيصال' : 'طباعة الإيصال'} - ${APP_NAME}</title>
+                    <title>${previewMode ? 'معاينة الإيصال' : 'طباعة الإيصال'} - ${companyName}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
                     <style>
                         :root {
@@ -109,6 +113,12 @@ const ServiceRequests: React.FC = () => {
                             font-weight: 900;
                             color: var(--primary-color);
                             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                            overflow: hidden;
+                        }
+                        .logo img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
                         }
 
                         /* Header Styles */
@@ -240,7 +250,9 @@ const ServiceRequests: React.FC = () => {
                 <body>
                     <div class="a4-page">
                         <div class="logo-container">
-                             <div class="logo">M</div>
+                             <div class="logo">
+                                ${companyLogo ? `<img src="${companyLogo}" alt="Logo" />` : 'M'}
+                             </div>
                         </div>
                         ${printContent.innerHTML}
                     </div>
@@ -679,7 +691,15 @@ const ServiceRequests: React.FC = () => {
       <div className="hidden">
         <div ref={printRef}>
             <div className="header">
-                <h1>مركز الصيانة مليون موبايل</h1>
+                <h1>{StorageService.getSettings().companyName || 'مركز الصيانة مليون موبايل'}</h1>
+                <div style={{ fontSize: '14px', fontWeight: 'bold', marginTop: '5px', color: '#333', textAlign: 'center' }}>
+                    {StorageService.getSettings().companyPhones || 'فرع الظل 0924561111 / فرع زناته 0949291111'}
+                </div>
+                {StorageService.getSettings().companyAddress && (
+                    <div style={{ fontSize: '12px', marginTop: '3px', color: '#555', textAlign: 'center' }}>
+                        {StorageService.getSettings().companyAddress}
+                    </div>
+                )}
                 <div className="header-meta">
                      <div className="receipt-number">إيصال استلام رقم: #{formData.requestNumber || '...'}</div>
                      <div>التاريخ: {new Date().toLocaleDateString('ar-EG')} - {new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</div>
