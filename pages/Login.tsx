@@ -42,11 +42,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         <div className="bg-primary p-8 text-center relative">
           <div className="flex justify-center mb-4">
             {/* Styled M Logo */}
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-secondary">
-                <span className="text-6xl font-black text-primary font-sans">M</span>
+            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-secondary overflow-hidden">
+                {StorageService.getSettings().companyLogo ? (
+                    <img src={StorageService.getSettings().companyLogo} alt="Logo" className="w-full h-full object-cover" />
+                ) : (
+                    <span className="text-6xl font-black text-primary font-sans">
+                        {(StorageService.getSettings().companyName || 'م').charAt(0)}
+                    </span>
+                )}
             </div>
           </div>
-          <p className="text-gray-300 text-sm mt-1 border-t border-gray-600 pt-3 inline-block px-4">نظام إدارة مركز الصيانة</p>
+          <p className="text-gray-300 text-sm mt-1 border-t border-gray-600 pt-3 inline-block px-4">{StorageService.getSettings().companyName || 'نظام إدارة مركز الصيانة'}</p>
         </div>
 
         {/* Form Area */}
@@ -93,7 +99,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </form>
 
           <div className="mt-6 text-center text-xs text-gray-400">
-            <p className="mt-2">الإصدار 3.2.0 - جميع الحقوق محفوظة لمركز مليون موبايل</p>
+            <p className="mt-2">الإصدار 3.2.0 - جميع الحقوق محفوظة لـ {StorageService.getSettings().companyName || 'مركز مليون موبايل'}</p>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Smartphone, FileText, ClipboardList, Calculator, LogOut, Users, Save, Cloud, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { User } from '../types';
 import { APP_NAME } from '../constants';
+import StorageService from '../services/storage';
 
 interface SidebarProps {
   user: User;
@@ -75,11 +76,17 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, setIsOpen }) 
         <div className="p-6 text-center border-b border-gray-700">
           <div className="flex justify-center mb-4">
              {/* Styled M Logo */}
-             <div className="w-20 h-20 bg-gradient-to-br from-secondary to-yellow-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition-all border-2 border-primary">
-                 <span className="text-5xl font-black text-primary font-sans">M</span>
+             <div className="w-20 h-20 bg-gradient-to-br from-secondary to-yellow-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition-all border-2 border-primary overflow-hidden">
+                 {StorageService.getSettings().companyLogo ? (
+                     <img src={StorageService.getSettings().companyLogo} alt="Logo" className="w-full h-full object-cover" />
+                 ) : (
+                     <span className="text-5xl font-black text-primary font-sans">
+                         {(StorageService.getSettings().companyName || APP_NAME).charAt(0)}
+                     </span>
+                 )}
              </div>
           </div>
-          <h2 className="text-lg font-bold text-secondary hidden">million mobile</h2>
+          <h2 className="text-lg font-bold text-secondary mt-2">{StorageService.getSettings().companyName || APP_NAME}</h2>
         </div>
 
         <div className="p-4 border-b border-gray-700 bg-gray-800">

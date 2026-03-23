@@ -97,7 +97,7 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
 
         {/* Quick Actions */}
         <div className="bg-gradient-to-br from-primary to-gray-800 text-white p-6 rounded-xl shadow-md flex flex-col justify-center">
-          <h3 className="font-bold text-lg mb-2">مليون موبايل</h3>
+          <h3 className="font-bold text-lg mb-2">{StorageService.getSettings().companyName || 'مليون موبايل'}</h3>
           <p className="opacity-80 mb-6">نظام إدارة الصيانة الاحترافي.</p>
           <div className="flex gap-4">
              <button 

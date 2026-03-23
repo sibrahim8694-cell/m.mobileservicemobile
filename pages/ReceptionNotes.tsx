@@ -375,7 +375,7 @@ const ReceptionNotes: React.FC = () => {
                                 {StorageService.getSettings().companyLogo ? (
                                     <img src={StorageService.getSettings().companyLogo} alt="Logo" />
                                 ) : (
-                                    'M'
+                                    (StorageService.getSettings().companyName || 'م').charAt(0)
                                 )}
                             </div>
                             <div style={{ fontSize: '16px', fontWeight: 'bold', marginTop: '10px', color: '#000' }}>

@@ -135,9 +135,15 @@ const Settings: React.FC = () => {
       companyAddress,
       companyLogo
     });
+    
+    if (companyName) {
+      document.title = companyName;
+    }
+
     setTimeout(() => {
       setIsSavingCompany(false);
       alert('تم حفظ بيانات الشركة بنجاح');
+      window.location.reload();
     }, 500);
   };
 
@@ -262,13 +268,13 @@ const Settings: React.FC = () => {
                <Database size={24} />
              </div>
              <div>
-               <h3 className="font-bold text-lg">بيانات الشركة (تظهر في الطباعة)</h3>
-               <p className="text-sm text-gray-500">تعديل اسم الشركة، أرقام الهواتف، العنوان، والشعار</p>
+               <h3 className="font-bold text-lg">بيانات البرنامج والشركة</h3>
+               <p className="text-sm text-gray-500">تعديل اسم البرنامج، أرقام الهواتف، العنوان، والشعار (تظهر في التطبيق والطباعة)</p>
              </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">اسم الشركة</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">اسم البرنامج / الشركة</label>
               <input 
                 type="text" 
                 className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary"
@@ -346,7 +352,7 @@ const Settings: React.FC = () => {
               className="bg-primary text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <Save size={18} />
-              {isSavingCompany ? 'جاري الحفظ...' : 'حفظ بيانات الشركة'}
+              {isSavingCompany ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
             </button>
           </div>
         </div>

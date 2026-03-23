@@ -22,6 +22,12 @@ function App() {
     // Check session - in a real app check token
     const storedUser = localStorage.getItem('mm_current_user');
     if (storedUser) setUser(JSON.parse(storedUser));
+
+    // Update document title
+    const settings = StorageService.getSettings();
+    if (settings.companyName) {
+      document.title = settings.companyName;
+    }
   }, []);
 
   const handleLogin = (loggedInUser: User) => {
@@ -54,7 +60,7 @@ function App() {
             <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
               <Menu size={24} />
             </button>
-            <h1 className="flex-1 text-center font-bold text-primary">مليون موبايل</h1>
+            <h1 className="flex-1 text-center font-bold text-primary">{StorageService.getSettings().companyName || 'مليون موبايل'}</h1>
             <div className="w-6"></div> {/* Spacer */}
           </header>
 

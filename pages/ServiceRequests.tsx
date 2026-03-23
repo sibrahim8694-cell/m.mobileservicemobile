@@ -251,7 +251,7 @@ const ServiceRequests: React.FC = () => {
                     <div class="a4-page">
                         <div class="logo-container">
                              <div class="logo">
-                                ${companyLogo ? `<img src="${companyLogo}" alt="Logo" />` : 'M'}
+                                ${companyLogo ? `<img src="${companyLogo}" alt="Logo" />` : (companyName || 'م').charAt(0)}
                              </div>
                         </div>
                         ${printContent.innerHTML}
