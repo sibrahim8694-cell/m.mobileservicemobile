@@ -26,7 +26,7 @@ const ReceptionNotes: React.FC = () => {
 
   useEffect(() => {
     loadNotes();
-    const stored = localStorage.getItem('mm_current_user');
+    const stored = sessionStorage.getItem('mm_current_user');
     if (stored) setCurrentUser(JSON.parse(stored));
   }, []);
 

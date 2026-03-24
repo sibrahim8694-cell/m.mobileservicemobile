@@ -207,9 +207,9 @@ const StorageService = {
     if (index !== -1) {
         users[index] = updatedUser;
         localStorage.setItem(KEYS.USERS, JSON.stringify(users));
-        const currentUser = JSON.parse(localStorage.getItem('mm_current_user') || '{}');
+        const currentUser = JSON.parse(sessionStorage.getItem('mm_current_user') || '{}');
         if (currentUser.id === updatedUser.id) {
-            localStorage.setItem('mm_current_user', JSON.stringify(updatedUser));
+            sessionStorage.setItem('mm_current_user', JSON.stringify(updatedUser));
         }
 
         // Sync to Supabase

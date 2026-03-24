@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     StorageService.init();
     // Check session - in a real app check token
-    const storedUser = localStorage.getItem('mm_current_user');
+    const storedUser = sessionStorage.getItem('mm_current_user');
     if (storedUser) setUser(JSON.parse(storedUser));
 
     // Update document title
@@ -32,12 +32,12 @@ function App() {
 
   const handleLogin = (loggedInUser: User) => {
     setUser(loggedInUser);
-    localStorage.setItem('mm_current_user', JSON.stringify(loggedInUser));
+    sessionStorage.setItem('mm_current_user', JSON.stringify(loggedInUser));
   };
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('mm_current_user');
+    sessionStorage.removeItem('mm_current_user');
   };
 
   if (!user) {
