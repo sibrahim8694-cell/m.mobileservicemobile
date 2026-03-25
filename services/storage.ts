@@ -83,6 +83,10 @@ const StorageService = {
         }
       }
     } catch (error: any) {
+      if (!isManual && (error.message.includes("EBLOCKED") || error.message.includes("-16") || error.message.includes("blocked"))) {
+        console.warn("Auto-sync from MEGA skipped: Account blocked");
+        return;
+      }
       console.error("Error syncing from MEGA:", error);
       if (isManual) {
         alert(`حدث خطأ أثناء الاستعادة: ${error.message}`);
@@ -434,6 +438,10 @@ const StorageService = {
       
       if (!response.ok) {
         const errorData = await response.json();
+        if (type !== 'manual' && (errorData.error?.includes("EBLOCKED") || errorData.error?.includes("-16") || errorData.error?.includes("blocked"))) {
+          console.warn(`Auto-backup to MEGA skipped (${type}): Account blocked`);
+          return;
+        }
         console.error("Failed to backup to MEGA:", errorData);
         if (type === 'manual') {
           window.dispatchEvent(new Event('mm_backup_error'));

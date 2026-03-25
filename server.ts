@@ -10,6 +10,7 @@ dotenv.config();
 
 // Global storage instance to avoid repeated logins
 let globalMegaStorage: Storage | null = null;
+let megaBlocked = false;
 
 async function getMegaConnection() {
   const email = process.env.MEGA_EMAIL?.trim();
@@ -17,6 +18,10 @@ async function getMegaConnection() {
 
   if (!email || !password) {
     throw new Error("MEGA credentials (MEGA_EMAIL, MEGA_PASSWORD) are missing in environment variables.");
+  }
+
+  if (megaBlocked) {
+    throw new Error("EBLOCKED (-16): User blocked");
   }
 
   // If we already have a connected instance, verify it's still good
@@ -45,7 +50,11 @@ async function getMegaConnection() {
     await new Promise((resolve, reject) => {
       storage.login((err) => {
         if (err) {
-          console.error("[MEGA] Login callback error:", err.message);
+          if (err.message.includes("EBLOCKED") || err.message.includes("-16")) {
+            megaBlocked = true;
+          } else {
+            console.error("[MEGA] Login callback error:", err.message);
+          }
           reject(err);
         } else {
           resolve(null);
@@ -59,7 +68,12 @@ async function getMegaConnection() {
     return storage;
   } catch (error: any) {
     globalMegaStorage = null;
-    console.error("[MEGA] Connection failed:", error.message);
+    if (error.message.includes("EBLOCKED") || error.message.includes("-16")) {
+      megaBlocked = true;
+      console.warn("[MEGA] Account blocked. Sync disabled for this session.");
+    } else {
+      console.error("[MEGA] Connection failed:", error.message);
+    }
     throw error;
   }
 }
@@ -109,11 +123,13 @@ async function startServer() {
       res.json({ data: JSON.parse(jsonStr) });
     } catch (error: any) {
       globalMegaStorage = null; // Invalidate connection on error
-      console.error("[MEGA] Fetch Error:", error.message);
+      if (!megaBlocked) {
+        console.error("[MEGA] Fetch Error:", error.message);
+      }
       // Don't expose internal error details if it's just auth failure
-      if (error.message.includes("ENOENT") || error.message.includes("-9")) {
-         console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
-         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password. Please check your .env file." });
+      if (error.message.includes("ENOENT") || error.message.includes("-9") || error.message.includes("EBLOCKED") || error.message.includes("-16")) {
+         if (!megaBlocked) console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
+         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password, or account blocked." });
       }
       res.status(500).json({ error: error.message || "Failed to fetch from MEGA" });
     }
@@ -183,10 +199,12 @@ async function startServer() {
       }
     } catch (error: any) {
       globalMegaStorage = null; // Invalidate connection on error
-      console.error("[MEGA] Backup Error:", error.message);
-      if (error.message.includes("ENOENT") || error.message.includes("-9")) {
-         console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
-         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password. Please check your .env file." });
+      if (!megaBlocked) {
+        console.error("[MEGA] Backup Error:", error.message);
+      }
+      if (error.message.includes("ENOENT") || error.message.includes("-9") || error.message.includes("EBLOCKED") || error.message.includes("-16")) {
+         if (!megaBlocked) console.error("[MEGA] Critical: Login failed. Please verify MEGA_EMAIL and MEGA_PASSWORD in .env file.");
+         return res.status(401).json({ error: "MEGA Login Failed: Invalid email or password, or account blocked." });
       }
       res.status(500).json({ error: error.message || "Failed to upload to MEGA" });
     }
