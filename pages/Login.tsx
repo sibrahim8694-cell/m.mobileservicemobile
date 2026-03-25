@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { User } from '../types';
 import StorageService from '../services/storage';
 
@@ -9,6 +10,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
@@ -17,11 +19,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     let user = users.find(u => u.username === username && u.password === password);
 
     // Hardcoded fallback to guarantee access even if database is out of sync
-    if (!user && username === 'admin' && password === '123456') {
+    if (!user && username === 'admin' && password === 'farha772022') {
       user = {
         id: '1',
         username: 'admin',
-        password: '123456',
+        password: 'farha772022',
         fullName: 'مدير النظام',
         role: 'admin',
         permissions: []
@@ -74,14 +76,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all text-left"
-                placeholder="••••••••"
-                dir="ltr"
-              />
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all text-left"
+                  placeholder="••••••••"
+                  dir="ltr"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             {error && (

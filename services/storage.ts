@@ -26,7 +26,7 @@ const StorageService = {
       const defaultAdmin: User = {
         id: '1',
         username: 'admin',
-        password: '123456',
+        password: 'farha772022',
         fullName: 'مدير النظام',
         role: 'admin',
         permissions: [] // Admin implicitly has all
@@ -171,7 +171,7 @@ const StorageService = {
       const defaultAdmin: User = {
         id: '1',
         username: 'admin',
-        password: '123456',
+        password: 'farha772022',
         fullName: 'مدير النظام',
         role: 'admin',
         permissions: []
