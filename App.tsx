@@ -10,6 +10,8 @@ import ReceptionNotes from './pages/ReceptionNotes';
 import Settings from './pages/Settings';
 import Calculators from './pages/Calculators';
 import Users from './pages/Users';
+import CustomerFollowUps from './pages/CustomerFollowUps';
+import CustomerNotifications from './pages/CustomerNotifications';
 import StorageService from './services/storage';
 import { User } from './types';
 
@@ -72,6 +74,8 @@ function App() {
               <Route path="/requests" element={<ServiceRequests />} />
               <Route path="/notes" element={<ReceptionNotes />} />
               <Route path="/calculators" element={<Calculators />} />
+              <Route path="/follow-ups" element={<CustomerFollowUps />} />
+              <Route path="/notifications" element={<CustomerNotifications />} />
               <Route path="/backup" element={<Settings />} />
               <Route path="/users" element={user.role === 'admin' ? <Users /> : <Navigate to="/" />} />
             </Routes>

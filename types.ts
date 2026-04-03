@@ -50,3 +50,28 @@ export interface BackupLog {
   type: 'local' | 'cloud';
   size: string;
 }
+
+export interface CustomerFollowUp {
+  id: string;
+  date: string;
+  branch: string;
+  customerName: string;
+  customerNumber: string;
+  customerMobile: string;
+  receiptNumber: string;
+  status: 'تحت الصيانه' | 'جاهز للاستلام' | 'تم التسيلم';
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface CustomerNotification {
+  id: string;
+  date: string;
+  customerName: string;
+  receiptNumber: string;
+  notificationContent: string;
+  status: 'تم التبيلغ' | 'لم يرد' | 'رساله' | 'موافق';
+  createdBy: string;
+  createdAt: string;
+}

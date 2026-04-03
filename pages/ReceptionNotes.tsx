@@ -80,7 +80,7 @@ const ReceptionNotes: React.FC = () => {
   }, [printNote]);
 
   const loadNotes = () => {
-    setNotes(StorageService.getNotes().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    setNotes(StorageService.getNotes().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -270,98 +270,93 @@ const ReceptionNotes: React.FC = () => {
            )}
          </div>
 
-         {/* List Section - Cards */}
+         {/* List Section - Table */}
          <div className="xl:col-span-8 order-1 xl:order-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 {filteredNotes.map(note => {
-                   const isOverdue = checkIsOverdue(note.date, note.isCompleted);
-                   return (
-                   <div key={note.id} 
-                        className={`p-5 rounded-2xl border transition-all duration-200 relative group flex flex-col
-                          ${note.isCompleted 
-                            ? 'bg-gray-50 border-gray-200 opacity-60' 
-                            : isOverdue 
-                                ? 'bg-red-50 border-red-300 ring-1 ring-red-100' 
-                                : 'bg-white border-gray-200 shadow-sm hover:shadow-md hover:border-secondary'}
-                        `}>
-                      
-                      {/* Note Number Badge */}
-                      <div className="absolute top-5 left-5 flex gap-2">
-                         {isOverdue && !note.isCompleted && (
-                             <div className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1 shadow-sm animate-pulse">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-right">
+                  <thead className="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                      <th className="p-4 font-semibold text-gray-600">رقم</th>
+                      <th className="p-4 font-semibold text-gray-600">التاريخ</th>
+                      <th className="p-4 font-semibold text-gray-600">العميل</th>
+                      <th className="p-4 font-semibold text-gray-600">الملاحظة</th>
+                      <th className="p-4 font-semibold text-gray-600">المدون</th>
+                      <th className="p-4 font-semibold text-gray-600">الحالة</th>
+                      <th className="p-4 font-semibold text-gray-600 text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {filteredNotes.map(note => {
+                      const isOverdue = checkIsOverdue(note.date, note.isCompleted);
+                      return (
+                        <tr key={note.id} className={`hover:bg-gray-50 transition-colors ${note.isCompleted ? 'opacity-60 bg-gray-50' : isOverdue ? 'bg-red-50/50' : ''}`}>
+                          <td className="p-4 font-mono text-sm text-gray-500">{note.noteNumber || '-'}</td>
+                          <td className="p-4">
+                            <div className="text-sm">
+                              <span className={isOverdue && !note.isCompleted ? 'text-red-600 font-bold' : ''}>
+                                {new Date(note.date).toLocaleDateString('ar-EG')}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className={`font-medium ${note.isCompleted ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                              {note.customerName}
+                            </div>
+                            <div className="text-sm text-gray-500 font-mono" dir="ltr">{note.customerPhone}</div>
+                          </td>
+                          <td className="p-4 max-w-xs">
+                            <p className={`text-sm whitespace-pre-wrap ${note.isCompleted ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {note.note}
+                            </p>
+                          </td>
+                          <td className="p-4 text-sm">
+                            <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded font-bold">{note.taker}</span>
+                          </td>
+                          <td className="p-4">
+                            <button 
+                              onClick={() => toggleComplete(note)}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all
+                              ${note.isCompleted 
+                                  ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                  : 'bg-gray-100 text-gray-600 hover:bg-green-600 hover:text-white'}
+                              `}
+                            >
+                              {note.isCompleted ? <><Check size={14} /> مكتملة</> : 'تحديد كمكتملة'}
+                            </button>
+                            {isOverdue && !note.isCompleted && (
+                              <div className="mt-1 text-xs text-red-600 font-bold flex items-center gap-1">
                                 <AlertTriangle size={12} /> متأخرة
-                             </div>
-                         )}
-                         <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 border border-gray-200">
-                            <Hash size={12} /> {note.noteNumber || '-'}
-                         </div>
-                      </div>
-
-                      <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-50">
-                        <div className="flex items-center gap-3">
-                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl shrink-0 shadow-sm
-                                ${note.isCompleted ? 'bg-gray-200 text-gray-500' : 'bg-gradient-to-br from-primary to-gray-800 text-secondary'}
-                             `}>
-                               {note.customerName.charAt(0)}
-                             </div>
-                             <div>
-                                <h3 className={`font-bold text-lg leading-tight ${note.isCompleted ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                                  {note.customerName}
-                                </h3>
-                                <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                                   <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-500 font-bold' : ''}`}><Clock size={12} /> {new Date(note.date).toLocaleDateString('ar-EG')}</span>
-                                   <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                   <span className="font-mono">{note.customerPhone}</span>
-                                </div>
-                             </div>
-                        </div>
-
-                        <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity pl-12">
-                            <button onClick={() => setPrintNote(note)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="طباعة">
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex justify-center gap-2">
+                              <button onClick={() => setPrintNote(note)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="طباعة">
                                 <Printer size={18} />
-                            </button>
-                            <button onClick={() => handleDelete(note.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="حذف">
+                              </button>
+                              <button onClick={() => handleDelete(note.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="حذف">
                                 <Trash2 size={18} />
-                            </button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1">
-                        <p className={`text-sm leading-relaxed whitespace-pre-wrap ${note.isCompleted ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {note.note}
-                        </p>
-                      </div>
-
-                      <div className="mt-5 flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                            <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">مدون الملاحظة</div>
-                            <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">{note.taker}</div>
-                         </div>
-                         
-                         <button 
-                            onClick={() => toggleComplete(note)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all
-                            ${note.isCompleted 
-                                ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                                : 'bg-gray-100 text-gray-600 hover:bg-green-600 hover:text-white'}
-                            `}
-                        >
-                            {note.isCompleted ? <><Check size={14} /> مكتملة</> : 'تحديد كمكتملة'}
-                        </button>
-                      </div>
-                   </div>
-                 );
-                })}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {filteredNotes.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-gray-500">
+                          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                            <Search size={32} />
+                          </div>
+                          <p className="font-medium">لا توجد ملاحظات مسجلة</p>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-             
-            {filteredNotes.length === 0 && (
-               <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300 mt-4">
-                 <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                   <Search size={32} />
-                 </div>
-                 <p className="text-gray-500 font-medium">لا توجد ملاحظات مسجلة</p>
-               </div>
-            )}
          </div>
        </div>
 

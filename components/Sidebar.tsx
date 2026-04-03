@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Smartphone, FileText, ClipboardList, Calculator, LogOut, Users, Save, Cloud, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { LayoutDashboard, Smartphone, FileText, ClipboardList, Calculator, LogOut, Users, Save, Cloud, CheckCircle, AlertCircle, Loader2, Bell } from 'lucide-react';
 import { User } from '../types';
 import { APP_NAME } from '../constants';
 import StorageService from '../services/storage';
@@ -44,6 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isOpen, setIsOpen }) 
     { id: 'compatibility', to: '/compatibility', label: 'توافقات القطع', icon: Smartphone },
     { id: 'requests', to: '/requests', label: 'طلبات الصيانة', icon: FileText },
     { id: 'notes', to: '/notes', label: 'ملاحظات الريسبشن', icon: ClipboardList },
+    { id: 'follow-ups', to: '/follow-ups', label: 'متابعة الفروع', icon: Users },
+    { id: 'notifications', to: '/notifications', label: 'التبليغات', icon: Bell },
     { id: 'calculators', to: '/calculators', label: 'الحاسبات', icon: Calculator },
   ];
 

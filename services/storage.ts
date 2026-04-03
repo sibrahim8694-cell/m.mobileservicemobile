@@ -1,4 +1,4 @@
-import { User, ServiceRequest, ReceptionNote, BackupLog } from '../types';
+import { User, ServiceRequest, ReceptionNote, BackupLog, CustomerFollowUp, CustomerNotification } from '../types';
 import { supabase } from './supabase';
 
 const KEYS = {
@@ -6,7 +6,9 @@ const KEYS = {
   REQUESTS: 'mm_requests',
   NOTES: 'mm_notes',
   BACKUPS: 'mm_backups',
-  SETTINGS: 'mm_settings'
+  SETTINGS: 'mm_settings',
+  FOLLOW_UPS: 'mm_follow_ups',
+  NOTIFICATIONS: 'mm_notifications'
 };
 
 const safeParse = <T>(key: string, defaultValue: T): T => {
@@ -36,6 +38,8 @@ const StorageService = {
     if (!localStorage.getItem(KEYS.REQUESTS)) localStorage.setItem(KEYS.REQUESTS, JSON.stringify([]));
     if (!localStorage.getItem(KEYS.NOTES)) localStorage.setItem(KEYS.NOTES, JSON.stringify([]));
     if (!localStorage.getItem(KEYS.BACKUPS)) localStorage.setItem(KEYS.BACKUPS, JSON.stringify([]));
+    if (!localStorage.getItem(KEYS.FOLLOW_UPS)) localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify([]));
+    if (!localStorage.getItem(KEYS.NOTIFICATIONS)) localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify([]));
     
     // Auto-sync listener simulation
     window.addEventListener('storage', (e) => {
@@ -69,6 +73,12 @@ const StorageService = {
         }
         if (data.notes && data.notes.length > 0) {
           localStorage.setItem(KEYS.NOTES, JSON.stringify(data.notes));
+        }
+        if (data.followUps && data.followUps.length > 0) {
+          localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(data.followUps));
+        }
+        if (data.notifications && data.notifications.length > 0) {
+          localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(data.notifications));
         }
         console.log("Successfully synced local data from MEGA");
         window.dispatchEvent(new Event('mm_data_updated'));
@@ -113,13 +123,25 @@ const StorageService = {
       if (!notesError && notes && notes.length > 0) {
         localStorage.setItem(KEYS.NOTES, JSON.stringify(notes));
       }
+
+      // Fetch followUps
+      const { data: followUps, error: followUpsError } = await supabase.from('customer_follow_ups').select('*');
+      if (!followUpsError && followUps && followUps.length > 0) {
+        localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(followUps));
+      }
+
+      // Fetch notifications
+      const { data: notifications, error: notificationsError } = await supabase.from('customer_notifications').select('*');
+      if (!notificationsError && notifications && notifications.length > 0) {
+        localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+      }
     } catch (error) {
       console.error("Error syncing from Supabase:", error);
     }
   },
 
   checkTables: async () => {
-    const tables = ['users', 'service_requests', 'reception_notes'];
+    const tables = ['users', 'service_requests', 'reception_notes', 'customer_follow_ups', 'customer_notifications'];
     for (const table of tables) {
       const { error } = await supabase.from(table).select('count', { count: 'exact', head: true });
       if (error) {
@@ -135,6 +157,8 @@ const StorageService = {
       const users = StorageService.getUsers();
       const requests = StorageService.getRequests();
       const notes = StorageService.getNotes();
+      const followUps = StorageService.getFollowUps();
+      const notifications = StorageService.getNotifications();
 
       if (users.length > 0) {
         const { error } = await supabase.from('users').upsert(users);
@@ -157,6 +181,22 @@ const StorageService = {
         if (error) {
           console.error("Error syncing notes to Supabase:", error);
           alert(`فشل ترحيل الملاحظات: ${error.message}`);
+        }
+      }
+
+      if (followUps.length > 0) {
+        const { error } = await supabase.from('customer_follow_ups').upsert(followUps);
+        if (error) {
+          console.error("Error syncing follow ups to Supabase:", error);
+          alert(`فشل ترحيل متابعة الفروع: ${error.message}`);
+        }
+      }
+
+      if (notifications.length > 0) {
+        const { error } = await supabase.from('customer_notifications').upsert(notifications);
+        if (error) {
+          console.error("Error syncing notifications to Supabase:", error);
+          alert(`فشل ترحيل التبليغات: ${error.message}`);
         }
       }
       
@@ -402,6 +442,96 @@ const StorageService = {
     StorageService.triggerAutoCloudBackup();
   },
 
+  getFollowUps: (): CustomerFollowUp[] => safeParse<CustomerFollowUp[]>(KEYS.FOLLOW_UPS, []),
+  saveFollowUp: async (followUp: Omit<CustomerFollowUp, 'id'>) => {
+    const followUps = StorageService.getFollowUps();
+    const newFollowUp = {
+      ...followUp,
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2, 9)
+    };
+    followUps.push(newFollowUp);
+    localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(followUps));
+
+    try {
+      const { error } = await supabase.from('customer_follow_ups').insert([newFollowUp]);
+      if (error) console.error("Error saving follow up to Supabase:", error);
+    } catch (error) {
+      console.error("Error saving follow up to Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+    return newFollowUp;
+  },
+  updateFollowUp: async (followUp: CustomerFollowUp) => {
+    const followUps = StorageService.getFollowUps().map(f => f.id === followUp.id ? followUp : f);
+    localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(followUps));
+
+    try {
+      await supabase.from('customer_follow_ups').update(followUp).eq('id', followUp.id);
+    } catch (error) {
+      console.error("Error updating follow up in Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+  },
+  deleteFollowUp: async (id: string) => {
+    const followUps = StorageService.getFollowUps().filter(f => f.id !== id);
+    localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(followUps));
+
+    try {
+      await supabase.from('customer_follow_ups').delete().eq('id', id);
+    } catch (error) {
+      console.error("Error deleting follow up from Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+  },
+
+  getNotifications: (): CustomerNotification[] => safeParse<CustomerNotification[]>(KEYS.NOTIFICATIONS, []),
+  saveNotification: async (notification: Omit<CustomerNotification, 'id'>) => {
+    const notifications = StorageService.getNotifications();
+    const newNotification = {
+      ...notification,
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2, 9)
+    };
+    notifications.push(newNotification);
+    localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+
+    try {
+      const { error } = await supabase.from('customer_notifications').insert([newNotification]);
+      if (error) console.error("Error saving notification to Supabase:", error);
+    } catch (error) {
+      console.error("Error saving notification to Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+    return newNotification;
+  },
+  updateNotification: async (notification: CustomerNotification) => {
+    const notifications = StorageService.getNotifications().map(n => n.id === notification.id ? notification : n);
+    localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+
+    try {
+      await supabase.from('customer_notifications').update(notification).eq('id', notification.id);
+    } catch (error) {
+      console.error("Error updating notification in Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+  },
+  deleteNotification: async (id: string) => {
+    const notifications = StorageService.getNotifications().filter(n => n.id !== id);
+    localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+
+    try {
+      await supabase.from('customer_notifications').delete().eq('id', id);
+    } catch (error) {
+      console.error("Error deleting notification from Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
+  },
+
   getBackups: (): BackupLog[] => safeParse<BackupLog[]>(KEYS.BACKUPS, []),
   
   triggerAutoCloudBackup: async (isManual = false) => {
@@ -468,6 +598,8 @@ const StorageService = {
       users: StorageService.getUsers(),
       requests: StorageService.getRequests(),
       notes: StorageService.getNotes(),
+      followUps: StorageService.getFollowUps(),
+      notifications: StorageService.getNotifications(),
       timestamp: new Date().toISOString()
     };
     

@@ -45,6 +45,33 @@ CREATE TABLE IF NOT EXISTS reception_notes (
     "isCompleted" BOOLEAN NOT NULL DEFAULT false
 );
 
+-- 4. جدول متابعة الفروع (Customer Follow Ups)
+CREATE TABLE IF NOT EXISTS customer_follow_ups (
+    id TEXT PRIMARY KEY,
+    date TEXT NOT NULL,
+    branch TEXT NOT NULL,
+    "customerName" TEXT NOT NULL,
+    "customerNumber" TEXT,
+    "customerMobile" TEXT NOT NULL,
+    "receiptNumber" TEXT NOT NULL,
+    status TEXT NOT NULL,
+    notes TEXT,
+    "createdBy" TEXT NOT NULL,
+    "createdAt" TEXT NOT NULL
+);
+
+-- 5. جدول التبليغات (Customer Notifications)
+CREATE TABLE IF NOT EXISTS customer_notifications (
+    id TEXT PRIMARY KEY,
+    date TEXT NOT NULL,
+    "customerName" TEXT NOT NULL,
+    "receiptNumber" TEXT NOT NULL,
+    "notificationContent" TEXT NOT NULL,
+    status TEXT NOT NULL,
+    "createdBy" TEXT NOT NULL,
+    "createdAt" TEXT NOT NULL
+);
+
 -- ==========================================
 -- إعدادات الأمان (RLS - Row Level Security)
 -- ==========================================
@@ -54,6 +81,8 @@ CREATE TABLE IF NOT EXISTS reception_notes (
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE service_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reception_notes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE customer_follow_ups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE customer_notifications ENABLE ROW LEVEL SECURITY;
 
 -- سياسات السماح الكامل (تأكد من أن مفتاح Anon Key الخاص بك سري ولا يشارك للعامة)
 DROP POLICY IF EXISTS "Allow All Operations on Users" ON users;
@@ -64,3 +93,9 @@ CREATE POLICY "Allow All Operations on Service Requests" ON service_requests FOR
 
 DROP POLICY IF EXISTS "Allow All Operations on Reception Notes" ON reception_notes;
 CREATE POLICY "Allow All Operations on Reception Notes" ON reception_notes FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow All Operations on Customer Follow Ups" ON customer_follow_ups;
+CREATE POLICY "Allow All Operations on Customer Follow Ups" ON customer_follow_ups FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow All Operations on Customer Notifications" ON customer_notifications;
+CREATE POLICY "Allow All Operations on Customer Notifications" ON customer_notifications FOR ALL USING (true) WITH CHECK (true);

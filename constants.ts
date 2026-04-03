@@ -43,6 +43,8 @@ export const PERMISSIONS_LIST = [
   { id: 'notes', label: 'الوصول لملاحظات الريسبشن' },
   { id: 'add_note', label: 'إضافة ملاحظة ريسبشن' },
   { id: 'delete_note', label: 'حذف ملاحظات الريسبشن' },
+  { id: 'follow-ups', label: 'الوصول لمتابعة الفروع' },
+  { id: 'notifications', label: 'الوصول للتبليغات' },
   { id: 'compatibility', label: 'فحص التوافقات' },
   { id: 'calculators', label: 'الحاسبات' },
 ];
