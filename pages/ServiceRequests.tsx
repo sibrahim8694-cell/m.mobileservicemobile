@@ -603,17 +603,31 @@ const ServiceRequests: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Problem Description */}
-                <div>
-                     <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
-                        <AlertCircle size={16} className="text-primary"/> مشكلة الجهاز
-                     </label>
-                     <textarea 
-                        className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all min-h-[100px] resize-none text-gray-700"
-                        placeholder="وصف مشكلة الجهاز"
-                        value={formData.problemDescription}
-                        onChange={e => setFormData({...formData, problemDescription: e.target.value})}
-                     />
+                {/* Problem Description & Condition */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
+                            <AlertCircle size={16} className="text-primary"/> مشكلة الجهاز
+                         </label>
+                         <textarea 
+                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all min-h-[100px] resize-none text-gray-700"
+                            placeholder="وصف مشكلة الجهاز"
+                            value={formData.problemDescription}
+                            onChange={e => setFormData({...formData, problemDescription: e.target.value})}
+                         />
+                    </div>
+                    <div>
+                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
+                            <CheckCircle size={16} className="text-blue-600"/> حالة الجهاز عند الاستلام
+                         </label>
+                         <select 
+                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all appearance-none"
+                            value={formData.condition}
+                            onChange={e => setFormData({...formData, condition: e.target.value})}
+                         >
+                            {DEVICE_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                         </select>
+                    </div>
                 </div>
 
                 {/* Parts Section - Integrated */}
@@ -658,7 +672,7 @@ const ServiceRequests: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
-                             <CheckCircle size={16} className="text-blue-600"/> حالة الجهاز
+                             <CheckCircle size={16} className="text-blue-600"/> حالة الطلب
                         </label>
                         <select 
                             className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all appearance-none"
