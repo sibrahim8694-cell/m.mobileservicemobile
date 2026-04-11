@@ -17,7 +17,6 @@ export interface ServiceRequest {
   deviceSerial: string;
   devicePassword?: string;
   problemDescription: string;
-  condition: string;
   receiver: string;
   parts: { name: string; price: number }[];
   totalPrice: number;

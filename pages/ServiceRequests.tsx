@@ -23,7 +23,6 @@ const ServiceRequests: React.FC = () => {
     deviceSerial: '',
     devicePassword: '',
     problemDescription: '',
-    condition: DEVICE_STATUS_OPTIONS[0],
     receiver: STAFF_NAMES[0],
     parts: [{ name: '', price: 0 }],
     status: 'جديد',
@@ -307,7 +306,6 @@ const ServiceRequests: React.FC = () => {
       deviceSerial: '',
       devicePassword: '',
       problemDescription: '',
-      condition: DEVICE_STATUS_OPTIONS[0],
       receiver: STAFF_NAMES[0],
       parts: [{ name: '', price: 0 }],
       status: 'جديد',
@@ -603,31 +601,17 @@ const ServiceRequests: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Problem Description & Condition */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
-                            <AlertCircle size={16} className="text-primary"/> مشكلة الجهاز
-                         </label>
-                         <textarea 
-                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all min-h-[100px] resize-none text-gray-700"
-                            placeholder="وصف مشكلة الجهاز"
-                            value={formData.problemDescription}
-                            onChange={e => setFormData({...formData, problemDescription: e.target.value})}
-                         />
-                    </div>
-                    <div>
-                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
-                            <CheckCircle size={16} className="text-blue-600"/> حالة الجهاز عند الاستلام
-                         </label>
-                         <select 
-                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all appearance-none"
-                            value={formData.condition}
-                            onChange={e => setFormData({...formData, condition: e.target.value})}
-                         >
-                            {DEVICE_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                         </select>
-                    </div>
+                {/* Problem Description */}
+                <div>
+                     <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
+                        <AlertCircle size={16} className="text-primary"/> مشكلة الجهاز
+                     </label>
+                     <textarea 
+                        className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all min-h-[100px] resize-none text-gray-700"
+                        placeholder="وصف مشكلة الجهاز"
+                        value={formData.problemDescription}
+                        onChange={e => setFormData({...formData, problemDescription: e.target.value})}
+                     />
                 </div>
 
                 {/* Parts Section - Integrated */}
@@ -672,7 +656,7 @@ const ServiceRequests: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-1">
-                             <CheckCircle size={16} className="text-blue-600"/> حالة الطلب
+                             <CheckCircle size={16} className="text-blue-600"/> حالة الجهاز
                         </label>
                         <select 
                             className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary outline-none transition-all appearance-none"
@@ -757,7 +741,7 @@ const ServiceRequests: React.FC = () => {
                         <th>S/N - IMEI</th>
                         <td style={{fontFamily: 'monospace'}}>{formData.deviceSerial || '-'}</td>
                         <th>حالة الجهاز</th>
-                        <td>{formData.condition || '-'}</td>
+                        <td>{formData.status || '-'}</td>
                     </tr>
                     <tr>
                         <th>مستلم الطلب</th>
