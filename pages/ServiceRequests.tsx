@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ServiceRequest, User as UserType } from '../types';
 import StorageService from '../services/storage';
 import { DEVICE_STATUSES, STAFF_NAMES, APP_NAME, DEVICE_STATUS_OPTIONS } from '../constants';
-import { Search, Printer, Edit, Save, Plus, User, Smartphone, Wrench, DollarSign, FileText, X, Eye, ArrowRight, Trash2, Calendar, Hash, LayoutGrid, Receipt, AlertCircle, Lock, PenTool, CheckCircle } from 'lucide-react';
+import { Search, Printer, Edit, Save, Plus, User, Smartphone, Wrench, DollarSign, FileText, X, Eye, ArrowRight, Trash2, Calendar, Hash, LayoutGrid, Receipt, AlertCircle, Lock, PenTool, CheckCircle, RefreshCw } from 'lucide-react';
 import DeleteModal from '../components/DeleteModal';
 
 const ServiceRequests: React.FC = () => {
@@ -13,6 +13,7 @@ const ServiceRequests: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string | null }>({ isOpen: false, id: null });
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState<Partial<ServiceRequest>>({
@@ -40,6 +41,13 @@ const ServiceRequests: React.FC = () => {
   const loadRequests = () => {
     const data = StorageService.getRequests();
     setRequests(data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await StorageService.syncFromSupabase();
+    loadRequests();
+    setIsRefreshing(false);
   };
 
   const nextRequestNumber = useMemo(() => {
@@ -381,15 +389,25 @@ const ServiceRequests: React.FC = () => {
           <h1 className="text-2xl font-bold text-primary">إدارة طلبات الصيانة</h1>
           <p className="text-gray-500 text-sm mt-1">تسجيل ومتابعة الأجهزة</p>
         </div>
-        {!isFormOpen && hasPermission('add_request') && (
+        <div className="flex gap-2">
           <button 
-            onClick={() => { resetForm(); setIsFormOpen(true); }}
-            className="bg-primary text-secondary font-bold px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-gray-800 transition-all shadow-lg transform hover:-translate-y-1"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="bg-white border border-gray-200 text-gray-700 font-bold px-4 py-3 rounded-xl flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm"
           >
-            <Plus size={20} />
-            <span>طلب جديد</span>
+            <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : ''} />
+            <span className="hidden md:inline">تحديث</span>
           </button>
-        )}
+          {!isFormOpen && hasPermission('add_request') && (
+            <button 
+              onClick={() => { resetForm(); setIsFormOpen(true); }}
+              className="bg-primary text-secondary font-bold px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-gray-800 transition-all shadow-lg transform hover:-translate-y-1"
+            >
+              <Plus size={20} />
+              <span>طلب جديد</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {!isFormOpen ? (
@@ -724,8 +742,12 @@ const ServiceRequests: React.FC = () => {
                     <tr>
                         <th>S/N - IMEI</th>
                         <td style={{fontFamily: 'monospace'}}>{formData.deviceSerial || '-'}</td>
-                        <th>الحالة</th>
+                        <th>حالة الجهاز</th>
                         <td>{formData.condition || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th>حالة الطلب</th>
+                        <td colSpan="3" style={{ fontWeight: 'bold' }}>{formData.status || '-'}</td>
                     </tr>
                 </tbody>
             </table>

@@ -72,6 +72,16 @@ CREATE TABLE IF NOT EXISTS customer_notifications (
     "createdAt" TEXT NOT NULL
 );
 
+-- 6. جدول الإعدادات (Settings)
+CREATE TABLE IF NOT EXISTS settings (
+    id TEXT PRIMARY KEY,
+    "companyName" TEXT,
+    phone TEXT,
+    address TEXT,
+    terms TEXT,
+    "companyLogo" TEXT
+);
+
 -- ==========================================
 -- إعدادات الأمان (RLS - Row Level Security)
 -- ==========================================
@@ -83,6 +93,7 @@ ALTER TABLE service_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reception_notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customer_follow_ups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customer_notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
 -- سياسات السماح الكامل (تأكد من أن مفتاح Anon Key الخاص بك سري ولا يشارك للعامة)
 DROP POLICY IF EXISTS "Allow All Operations on Users" ON users;
@@ -99,3 +110,6 @@ CREATE POLICY "Allow All Operations on Customer Follow Ups" ON customer_follow_u
 
 DROP POLICY IF EXISTS "Allow All Operations on Customer Notifications" ON customer_notifications;
 CREATE POLICY "Allow All Operations on Customer Notifications" ON customer_notifications FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow All Operations on Settings" ON settings;
+CREATE POLICY "Allow All Operations on Settings" ON settings FOR ALL USING (true) WITH CHECK (true);

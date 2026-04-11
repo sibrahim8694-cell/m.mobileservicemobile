@@ -50,9 +50,6 @@ const StorageService = {
 
     // Try to sync from Supabase on init
     StorageService.syncFromSupabase();
-    
-    // Try to sync from MEGA on init
-    StorageService.syncFromMega();
   },
 
   syncFromMega: async (isManual = false) => {
@@ -79,6 +76,9 @@ const StorageService = {
         }
         if (data.notifications && data.notifications.length > 0) {
           localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(data.notifications));
+        }
+        if (data.settings) {
+          localStorage.setItem(KEYS.SETTINGS, JSON.stringify(data.settings));
         }
         console.log("Successfully synced local data from MEGA");
         window.dispatchEvent(new Event('mm_data_updated'));
@@ -135,13 +135,22 @@ const StorageService = {
       if (!notificationsError && notifications && notifications.length > 0) {
         localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
       }
+
+      // Fetch settings
+      const { data: settingsData, error: settingsError } = await supabase.from('settings').select('*').eq('id', '1').single();
+      if (!settingsError && settingsData) {
+        const { id, ...settingsObj } = settingsData;
+        localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settingsObj));
+      }
+      
+      window.dispatchEvent(new Event('mm_data_updated'));
     } catch (error) {
       console.error("Error syncing from Supabase:", error);
     }
   },
 
   checkTables: async () => {
-    const tables = ['users', 'service_requests', 'reception_notes', 'customer_follow_ups', 'customer_notifications'];
+    const tables = ['users', 'service_requests', 'reception_notes', 'customer_follow_ups', 'customer_notifications', 'settings'];
     for (const table of tables) {
       const { error } = await supabase.from(table).select('count', { count: 'exact', head: true });
       if (error) {
@@ -159,6 +168,12 @@ const StorageService = {
       const notes = StorageService.getNotes();
       const followUps = StorageService.getFollowUps();
       const notifications = StorageService.getNotifications();
+      const settings = StorageService.getSettings();
+
+      if (settings) {
+        const { error } = await supabase.from('settings').upsert({ id: '1', ...settings });
+        if (error) console.error("Error syncing settings to Supabase:", error);
+      }
 
       if (users.length > 0) {
         const { error } = await supabase.from('users').upsert(users);
@@ -258,7 +273,8 @@ const StorageService = {
 
         // Sync to Supabase
         try {
-          await supabase.from('users').update(updatedUser).eq('id', updatedUser.id);
+          const { error } = await supabase.from('users').upsert(updatedUser);
+          if (error) throw error;
         } catch (error) {
           console.error("Error updating user in Supabase:", error);
         }
@@ -343,7 +359,8 @@ const StorageService = {
 
     // Sync to Supabase
     try {
-      await supabase.from('service_requests').update(req).eq('id', req.id);
+      const { error } = await supabase.from('service_requests').upsert(req);
+      if (error) throw error;
     } catch (error) {
       console.error("Error updating request in Supabase:", error);
     }
@@ -374,8 +391,16 @@ const StorageService = {
     companyLogo: ''
   }),
   
-  saveSettings: (settings: any) => {
+  saveSettings: async (settings: any) => {
     localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+    
+    try {
+      await supabase.from('settings').upsert({ id: '1', ...settings });
+    } catch (error) {
+      console.error("Error saving settings to Supabase:", error);
+    }
+
+    StorageService.triggerAutoCloudBackup();
   },
 
   saveNote: async (note: Omit<ReceptionNote, 'id' | 'noteNumber'>) => {
@@ -421,7 +446,8 @@ const StorageService = {
 
     // Sync to Supabase
     try {
-      await supabase.from('reception_notes').update(note).eq('id', note.id);
+      const { error } = await supabase.from('reception_notes').upsert(note);
+      if (error) throw error;
     } catch (error) {
       console.error("Error updating note in Supabase:", error);
     }
@@ -467,7 +493,8 @@ const StorageService = {
     localStorage.setItem(KEYS.FOLLOW_UPS, JSON.stringify(followUps));
 
     try {
-      await supabase.from('customer_follow_ups').update(followUp).eq('id', followUp.id);
+      const { error } = await supabase.from('customer_follow_ups').upsert(followUp);
+      if (error) throw error;
     } catch (error) {
       console.error("Error updating follow up in Supabase:", error);
     }
@@ -512,7 +539,8 @@ const StorageService = {
     localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
 
     try {
-      await supabase.from('customer_notifications').update(notification).eq('id', notification.id);
+      const { error } = await supabase.from('customer_notifications').upsert(notification);
+      if (error) throw error;
     } catch (error) {
       console.error("Error updating notification in Supabase:", error);
     }
@@ -600,6 +628,7 @@ const StorageService = {
       notes: StorageService.getNotes(),
       followUps: StorageService.getFollowUps(),
       notifications: StorageService.getNotifications(),
+      settings: StorageService.getSettings(),
       timestamp: new Date().toISOString()
     };
     

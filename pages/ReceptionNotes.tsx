@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import StorageService from '../services/storage';
 import { ReceptionNote, User as UserType } from '../types';
 import { RECEPTION_TAKERS, APP_NAME } from '../constants';
-import { Check, Plus, Search, User, Phone, Edit3, Clock, Printer, Trash2, Calendar, Shield, Hash, AlertTriangle, BellRing } from 'lucide-react';
+import { Check, Plus, Search, User, Phone, Edit3, Clock, Printer, Trash2, Calendar, Shield, Hash, AlertTriangle, BellRing, RefreshCw } from 'lucide-react';
 import DeleteModal from '../components/DeleteModal';
 
 const ReceptionNotes: React.FC = () => {
@@ -11,6 +11,7 @@ const ReceptionNotes: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string | null }>({ isOpen: false, id: null });
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // States
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -83,6 +84,13 @@ const ReceptionNotes: React.FC = () => {
     setNotes(StorageService.getNotes().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await StorageService.syncFromSupabase();
+    loadNotes();
+    setIsRefreshing(false);
+  };
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -145,11 +153,21 @@ const ReceptionNotes: React.FC = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-full">
        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-         <div>
-            <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
-                <Edit3 /> ملاحظات الريسبشن
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">سجل المتابعات والاستفسارات اليومية</p>
+         <div className="flex items-center gap-4">
+            <div>
+               <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
+                   <Edit3 /> ملاحظات الريسبشن
+               </h1>
+               <p className="text-gray-500 text-sm mt-1">سجل المتابعات والاستفسارات اليومية</p>
+            </div>
+            <button 
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="bg-white border border-gray-200 text-gray-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm h-fit"
+            >
+              <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : ''} />
+              <span className="hidden md:inline">تحديث</span>
+            </button>
          </div>
          <div className="relative w-full md:w-80">
             <Search className="absolute right-3 top-3 text-gray-400" size={20} />

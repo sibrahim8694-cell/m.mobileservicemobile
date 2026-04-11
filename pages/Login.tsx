@@ -18,18 +18,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const users = StorageService.getUsers();
     let user = users.find(u => u.username === username && u.password === password);
 
-    // Hardcoded fallback to guarantee access even if database is out of sync
-    if (!user && username === 'admin' && password === 'farha772022') {
-      user = {
-        id: '1',
-        username: 'admin',
-        password: 'farha772022',
-        fullName: 'مدير النظام',
-        role: 'admin',
-        permissions: []
-      };
-    }
-
     if (user) {
       onLogin(user);
     } else {
