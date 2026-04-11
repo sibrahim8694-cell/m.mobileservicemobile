@@ -665,7 +665,7 @@ const ServiceRequests: React.FC = () => {
                             value={formData.status}
                             onChange={e => setFormData({...formData, status: e.target.value as any})}
                         >
-                            {DEVICE_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                            {DEVICE_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
                      <div>

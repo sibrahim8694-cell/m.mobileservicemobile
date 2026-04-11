@@ -4,6 +4,8 @@ import { CompatibilityItem } from './types';
 export const APP_NAME = "مركز الصيانة مليون موبايل";
 
 export const DEVICE_STATUS_OPTIONS = [
+  "جديد",
+  "قيد الإصلاح",
   "جاهز للاستلام",
   "تم التسليم",
   "عدم اصلاح",
