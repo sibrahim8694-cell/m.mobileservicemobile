@@ -746,8 +746,8 @@ const ServiceRequests: React.FC = () => {
                         <td>{formData.condition || '-'}</td>
                     </tr>
                     <tr>
-                        <th>حالة الطلب</th>
-                        <td colSpan="3" style={{ fontWeight: 'bold' }}>{formData.status || '-'}</td>
+                        <th>مستلم الطلب</th>
+                        <td colSpan="3" style={{ fontWeight: 'bold' }}>{formData.receiver || '-'}</td>
                     </tr>
                 </tbody>
             </table>
