@@ -21,7 +21,7 @@ export interface ServiceRequest {
   receiver: string;
   parts: { name: string; price: number }[];
   totalPrice: number;
-  status: 'جديد' | 'قيد الإصلاح' | 'جاهز للاستلام' | 'تم التسليم' | 'عدم إصلاح';
+  status: string;
   signature?: string;
   notes?: string;
 }
