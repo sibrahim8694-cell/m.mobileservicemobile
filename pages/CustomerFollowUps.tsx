@@ -73,6 +73,8 @@ const CustomerFollowUps: React.FC = () => {
       'اسم العميل': f.customerName,
       'رقم العميل': f.customerNumber,
       'رقم الموبايل': f.customerMobile,
+      'نوع الجهاز': f.deviceName || '',
+      'سريال الجهاز': f.deviceSerial || '',
       'رقم الوصل': f.receiptNumber,
       'الحالة': f.status,
       'ملاحظات': f.notes,
@@ -204,6 +206,25 @@ const CustomerFollowUps: React.FC = () => {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">نوع الجهاز</label>
+                  <input
+                    type="text"
+                    value={formData.deviceName || ''}
+                    onChange={e => setFormData({...formData, deviceName: e.target.value})}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">سريال الجهاز</label>
+                  <input
+                    type="text"
+                    value={formData.deviceSerial || ''}
+                    onChange={e => setFormData({...formData, deviceSerial: e.target.value})}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                    dir="ltr"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">رقم الوصل</label>
                   <input
                     type="text"
@@ -296,6 +317,7 @@ const CustomerFollowUps: React.FC = () => {
                 <th className="p-4 font-semibold text-gray-600">التاريخ</th>
                 <th className="p-4 font-semibold text-gray-600">الفرع</th>
                 <th className="p-4 font-semibold text-gray-600">العميل</th>
+                <th className="p-4 font-semibold text-gray-600">الجهاز</th>
                 <th className="p-4 font-semibold text-gray-600">رقم الوصل</th>
                 <th className="p-4 font-semibold text-gray-600">الحالة</th>
                 <th className="p-4 font-semibold text-gray-600">المدخل</th>
@@ -312,6 +334,10 @@ const CustomerFollowUps: React.FC = () => {
                   <td className="p-4">
                     <div className="font-medium">{f.customerName}</div>
                     <div className="text-sm text-gray-500" dir="ltr">{f.customerMobile}</div>
+                  </td>
+                  <td className="p-4">
+                    <div className="font-medium text-gray-800">{f.deviceName || '-'}</div>
+                    <div className="text-sm text-gray-500 font-mono text-left" dir="ltr">{f.deviceSerial || '-'}</div>
                   </td>
                   <td className="p-4 font-mono" dir="ltr">{f.receiptNumber}</td>
                   <td className="p-4">

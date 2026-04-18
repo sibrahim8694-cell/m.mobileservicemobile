@@ -59,6 +59,8 @@ export interface CustomerFollowUp {
   customerNumber: string;
   customerMobile: string;
   receiptNumber: string;
+  deviceName: string;
+  deviceSerial: string;
   status: 'تحت الصيانه' | 'جاهز للاستلام' | 'تم التسيلم';
   notes: string;
   createdBy: string;
